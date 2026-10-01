@@ -1,5 +1,10 @@
 const mario = document.querySelector('.mario');
 const pipe = document.querySelector('.pipe');
+const clouds = document.querySelector('.clouds');
+
+let gameOver = false;
+let pontos = 0;
+
 
 const jump = () => {
     new Audio('audio/jump-sound-effect.mp3').play();
@@ -9,12 +14,16 @@ const jump = () => {
     }, 500);
 }
 
-
+const aumentarPontuacao = setInterval(()=>{
+    let pontuacao = document.getElementById("pontuacao");
+    pontos++;
+    pontuacao.textContent = pontos;
+},100)
 
 const loop = setInterval(()=>{
 
-const pipePosition = pipe.offsetLeft;
-const marioPosition = +window.getComputedStyle(mario).bottom.replace('px','');
+    const pipePosition = pipe.offsetLeft;
+    const marioPosition = +window.getComputedStyle(mario).bottom.replace('px','');
 
     if (pipePosition <= 160 && pipePosition > 0 && marioPosition <= 100){
         pipe.style.animation = 'none';
@@ -26,8 +35,11 @@ const marioPosition = +window.getComputedStyle(mario).bottom.replace('px','');
         mario.src = 'images/game-over.png';
         mario.style.width = '75px';
         mario.style.marginLeft = '80px';
+
         new Audio('audio/death-sound-effect.mp3').play();
         clearInterval(loop)
+        clearInterval(aumentarPontuacao)
+        gameOver = true
     }
 
 }, 10)
@@ -35,7 +47,7 @@ const marioPosition = +window.getComputedStyle(mario).bottom.replace('px','');
 const opcoes = ['KeyW', 'Space', 'ArrowUp'];
 
 document.addEventListener("keydown", (event) => {
-    if (opcoes.includes(event.code)) {
+    if (!gameOver && opcoes.includes(event.code)) {
         jump();
     }
 });

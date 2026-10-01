@@ -39,6 +39,13 @@
     animation: clouds-animation 30s infinite linear ;
 }
 
+.pontuacao{
+    font-size: 50px;
+    position: absolute;
+    top: 0px;
+    right: 20px;
+}
+
 @keyframes pipe-animation{
     from {
         right: -80px;
