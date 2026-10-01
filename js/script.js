@@ -24,6 +24,7 @@ const loop = setInterval(()=>{
 
     const pipePosition = pipe.offsetLeft;
     const marioPosition = +window.getComputedStyle(mario).bottom.replace('px','');
+    const cloudsPosition = clouds.offsetLeft;
 
     if (pipePosition <= 160 && pipePosition > 0 && marioPosition <= 100){
         pipe.style.animation = 'none';
@@ -31,6 +32,10 @@ const loop = setInterval(()=>{
 
         mario.style.animation = 'none';
         mario.style.bottom = `${marioPosition}px`;
+
+        clouds.style.animation = 'none';
+        console.log(cloudsPosition,marioPosition,pipePosition);
+        clouds.style.left = `${cloudsPosition}px`;
 
         mario.src = 'images/game-over.png';
         mario.style.width = '75px';
