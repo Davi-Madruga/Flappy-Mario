@@ -46,6 +46,26 @@
     right: 20px;
 }
 
+.play-again {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    background: rgba(0, 0, 0, 0.8);
+    padding: 30px 40px;
+    border-radius: 12px;
+
+    text-align: center;
+    color: white;
+
+    z-index: 10;
+}
+
+.hidden {
+    display: none;
+}
+
 @keyframes pipe-animation{
     from {
         right: -80px;

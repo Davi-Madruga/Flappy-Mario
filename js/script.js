@@ -45,6 +45,11 @@ const loop = setInterval(()=>{
         clearInterval(loop)
         clearInterval(aumentarPontuacao)
         gameOver = true
+
+        setTimeout(() => {
+            const playAgain = document.querySelector('.play-again')
+            playAgain.classList.remove("hidden");
+        },2000)
     }
 
 }, 10)
@@ -54,5 +59,7 @@ const opcoes = ['KeyW', 'Space', 'ArrowUp'];
 document.addEventListener("keydown", (event) => {
     if (!gameOver && opcoes.includes(event.code)) {
         jump();
+    } else if (gameOver){
+        window.location.reload();
     }
 });
