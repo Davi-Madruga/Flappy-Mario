@@ -2,8 +2,8 @@ const mario = document.querySelector('.mario');
 const pipe = document.querySelector('.pipe');
 
 const jump = () => {
+    new Audio('audio/jump-sound-effect.mp3').play();
     mario.classList.add("jump");
-
     setTimeout(() => {
         mario.classList.remove("jump");
     }, 500);
@@ -24,7 +24,7 @@ const loop = setInterval(()=>{
         mario.src = 'images/game-over.png';
         mario.style.width = '75px';
         mario.style.marginLeft = '80px';
-
+        new Audio('audio/death-sound-effect.mp3').play();
         clearInterval(loop)
     }
 
