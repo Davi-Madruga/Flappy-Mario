@@ -9,10 +9,12 @@ const jump = () => {
     }, 500);
 }
 
+
+
 const loop = setInterval(()=>{
 
-    const pipePosition = pipe.offsetLeft;
-    const marioPosition = +window.getComputedStyle(mario).bottom.replace('px','');
+const pipePosition = pipe.offsetLeft;
+const marioPosition = +window.getComputedStyle(mario).bottom.replace('px','');
 
     if (pipePosition <= 160 && pipePosition > 0 && marioPosition <= 100){
         pipe.style.animation = 'none';
@@ -30,4 +32,10 @@ const loop = setInterval(()=>{
 
 }, 10)
 
-document.addEventListener("keydown", jump);
+const opcoes = ['KeyW', 'Space', 'ArrowUp'];
+
+document.addEventListener("keydown", (event) => {
+    if (opcoes.includes(event.code)) {
+        jump();
+    }
+});
