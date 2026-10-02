@@ -89,3 +89,26 @@ document.addEventListener("keydown", (event) => {
         window.location.reload();
     }
 });
+
+const gameBoard = document.querySelector('.game-board');
+const playAgain = document.querySelector('.play-again');
+
+const controlarPorToque = () => {
+    if (!gameOver) {
+        jump();
+    } else if (restart) {
+        window.location.reload();
+    }
+};
+
+gameBoard.addEventListener('pointerdown', (event) => {
+    if (event.isPrimary && event.button === 0) {
+        controlarPorToque();
+    }
+});
+
+playAgain.addEventListener('pointerdown', (event) => {
+    if (event.isPrimary && event.button === 0) {
+        controlarPorToque();
+    }
+});

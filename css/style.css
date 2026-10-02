@@ -66,6 +66,19 @@
     display: none;
 }
 
+.instrucoes {
+    padding: 16px;
+    text-align: center;
+    font-family: Arial, sans-serif;
+    font-size: 18px;
+}
+
+.game-board,
+.play-again {
+    touch-action: manipulation;
+    user-select: none;
+}
+
 @keyframes pipe-animation{
     from {
         right: -80px;
