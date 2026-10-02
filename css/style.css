@@ -99,3 +99,17 @@
         right: 100%;
     }
 }
+
+@keyframes game-over {
+    0% {
+        transform: translateY(0);
+    }
+
+    15% {
+        transform: translateY(-60px);
+    }
+
+    100% {
+        transform: translateY(600px);
+    }
+}

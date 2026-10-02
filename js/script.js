@@ -30,7 +30,7 @@ const loop = setInterval(()=>{
         pipe.style.animation = 'none';
         pipe.style.left = `${pipePosition}px`;
 
-        mario.style.animation = 'none';
+        mario.style.animation = 'game-over 2s linear';
         mario.style.bottom = `${marioPosition}px`;
 
         clouds.style.animation = 'none';
