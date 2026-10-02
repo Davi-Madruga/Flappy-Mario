@@ -31,11 +31,27 @@ const loop = setInterval(()=>{
     const marioPosition = +window.getComputedStyle(mario).bottom.replace('px','');
     const cloudsPosition = clouds.offsetLeft;
 
-    if (pipePosition <= 160 && pipePosition > 0 && marioPosition <= 100){
+    const marioRect = mario.getBoundingClientRect();
+    const pipeRect = pipe.getBoundingClientRect();      
+
+    const marioHitbox = {
+    left: marioRect.left + 50,
+    right: marioRect.right - 35,
+    top: marioRect.top + 20,
+    bottom: marioRect.bottom + 5};
+    
+    const pipeHitbox = pipeRect;
+
+    const colidiu =
+        marioHitbox.left < pipeHitbox.right &&
+        marioHitbox.right > pipeHitbox.left &&
+        marioHitbox.bottom > pipeHitbox.top;
+    
+    if (colidiu){
         pipe.style.animation = 'none';
         pipe.style.left = `${pipePosition}px`;
 
-        mario.style.animation = 'game-over 2s linear';
+        mario.style.animation = 'game-over 2s ease-in forwards';
         mario.style.bottom = `${marioPosition}px`;
 
         clouds.style.animation = 'none';
