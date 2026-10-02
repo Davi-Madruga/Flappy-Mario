@@ -7,8 +7,13 @@ let pontos = 0;
 
 
 const jump = () => {
+    if(mario.classList.contains('jump')) {
+        return
+    }
+
     new Audio('audio/jump-sound-effect.mp3').play();
     mario.classList.add("jump");
+    
     setTimeout(() => {
         mario.classList.remove("jump");
     }, 500);
