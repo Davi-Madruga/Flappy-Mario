@@ -4,7 +4,7 @@ const clouds = document.querySelector('.clouds');
 
 let gameOver = false;
 let pontos = 0;
-
+let restart = false;
 
 const jump = () => {
     if(mario.classList.contains('jump')) {
@@ -35,7 +35,7 @@ const loop = setInterval(()=>{
     const pipeRect = pipe.getBoundingClientRect();      
 
     const marioHitbox = {
-    left: marioRect.left + 50,
+    left: marioRect.left + 70,
     right: marioRect.right - 35,
     top: marioRect.top + 20,
     bottom: marioRect.bottom + 5};
@@ -59,8 +59,8 @@ const loop = setInterval(()=>{
         clouds.style.left = `${cloudsPosition}px`;
 
         mario.src = 'images/game-over.png';
-        mario.style.width = '75px';
-        mario.style.marginLeft = '80px';
+        mario.style.width = '80px';
+        mario.style.marginLeft = '70px';
 
         new Audio('audio/death-sound-effect.mp3').play();
         clearInterval(loop)
@@ -70,6 +70,7 @@ const loop = setInterval(()=>{
         setTimeout(() => {
             const playAgain = document.querySelector('.play-again')
             playAgain.classList.remove("hidden");
+            restart = true;
         },2000)
     }
 
@@ -78,9 +79,13 @@ const loop = setInterval(()=>{
 const opcoes = ['KeyW', 'Space', 'ArrowUp'];
 
 document.addEventListener("keydown", (event) => {
+    if (event.repeat) {
+        return;
+    }
+
     if (!gameOver && opcoes.includes(event.code)) {
         jump();
-    } else if (gameOver){
+    } else if (gameOver && restart){
         window.location.reload();
     }
 });
