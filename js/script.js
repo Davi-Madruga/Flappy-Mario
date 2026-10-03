@@ -6,6 +6,10 @@ let gameOver = false;
 let pontos = 0;
 let restart = false;
 
+const pontuacao = document.getElementById('pontuacao');
+const inicioPartida = performance.now();
+const pontosPorSegundo = 10;
+
 const jump = () => {
     if(mario.classList.contains('jump')) {
         return
@@ -19,11 +23,15 @@ const jump = () => {
     }, 500);
 }
 
-const aumentarPontuacao = setInterval(()=>{
-    let pontuacao = document.getElementById("pontuacao");
-    pontos++;
-    pontuacao.textContent = pontos;
-},100)
+const atualizarPontuacao = () => {
+    const segundos = (performance.now() - inicioPartida) / 1000;
+    const novosPontos = Math.floor(segundos * pontosPorSegundo);
+
+    if (novosPontos !== pontos) {
+        pontos = novosPontos;
+        pontuacao.textContent = pontos;
+    }
+};
 
 const loop = setInterval(()=>{
 
@@ -47,6 +55,7 @@ const loop = setInterval(()=>{
         marioHitbox.right > pipeHitbox.left &&
         marioHitbox.bottom > pipeHitbox.top;
     
+    atualizarPontuacao();
     if (colidiu){
         pipe.style.animation = 'none';
         pipe.style.left = `${pipePosition}px`;
@@ -64,7 +73,6 @@ const loop = setInterval(()=>{
 
         new Audio('audio/death-sound-effect.mp3').play();
         clearInterval(loop)
-        clearInterval(aumentarPontuacao)
         gameOver = true
 
         setTimeout(() => {
@@ -92,6 +100,19 @@ document.addEventListener("keydown", (event) => {
 
 const gameBoard = document.querySelector('.game-board');
 const playAgain = document.querySelector('.play-again');
+
+const velocidadeCano = 1200; // pixels por segundo
+
+const ajustarVelocidadeCano = () => {
+    const distancia = gameBoard.clientWidth + pipe.offsetWidth;
+    const duracao = distancia / velocidadeCano;
+
+    pipe.style.animationDuration = `${duracao}s`;
+};
+
+ajustarVelocidadeCano();
+
+window.addEventListener('resize', ajustarVelocidadeCano);
 
 const controlarPorToque = () => {
     if (!gameOver) {
