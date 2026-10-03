@@ -87,6 +87,10 @@ const loop = setInterval(()=>{
 const opcoes = ['KeyW', 'Space', 'ArrowUp'];
 
 document.addEventListener("keydown", (event) => {
+    if (opcoes.includes(event.code)) {
+        event.preventDefault();
+    }
+    
     if (event.repeat) {
         return;
     }
