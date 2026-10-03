@@ -9,22 +9,33 @@ let restart = false;
 const pontuacao = document.getElementById('pontuacao');
 const inicioPartida = performance.now();
 const pontosPorSegundo = 10;
+let pausado = document.hidden;
+let inicioPausa = pausado ? inicioPartida : 0;
+let tempoPausado = 0;
 
 const jump = () => {
-    if(mario.classList.contains('jump')) {
+    if (pausado || gameOver || mario.classList.contains('jump')) {
         return
     }
 
     new Audio('audio/jump-sound-effect.mp3').play();
     mario.classList.add("jump");
-    
-    setTimeout(() => {
-        mario.classList.remove("jump");
-    }, 500);
 }
 
+// A animação só termina depois de consumir seu tempo ativo, sem a pausa.
+mario.addEventListener('animationend', (event) => {
+    if (event.animationName === 'jump') {
+        mario.classList.remove('jump');
+    }
+
+    if (event.animationName === 'game-over' && gameOver) {
+        playAgain.classList.remove('hidden');
+        restart = true;
+    }
+});
+
 const atualizarPontuacao = () => {
-    const segundos = (performance.now() - inicioPartida) / 1000;
+    const segundos = (performance.now() - inicioPartida - tempoPausado) / 1000;
     const novosPontos = Math.floor(segundos * pontosPorSegundo);
 
     if (novosPontos !== pontos) {
@@ -34,6 +45,9 @@ const atualizarPontuacao = () => {
 };
 
 const loop = setInterval(()=>{
+    if (pausado) {
+        return;
+    }
 
     const pipePosition = pipe.offsetLeft;
     const marioPosition = +window.getComputedStyle(mario).bottom.replace('px','');
@@ -75,11 +89,6 @@ const loop = setInterval(()=>{
         clearInterval(loop)
         gameOver = true
 
-        setTimeout(() => {
-            const playAgain = document.querySelector('.play-again')
-            playAgain.classList.remove("hidden");
-            restart = true;
-        },2000)
     }
 
 }, 10)
@@ -91,7 +100,7 @@ document.addEventListener("keydown", (event) => {
         event.preventDefault();
     }
     
-    if (event.repeat) {
+    if (event.repeat || pausado) {
         return;
     }
 
@@ -104,6 +113,23 @@ document.addEventListener("keydown", (event) => {
 
 const gameBoard = document.querySelector('.game-board');
 const playAgain = document.querySelector('.play-again');
+
+gameBoard.classList.toggle('pausado', pausado);
+
+document.addEventListener('visibilitychange', () => {
+    const agora = performance.now();
+
+    if (document.hidden && !pausado) {
+        pausado = true;
+        inicioPausa = agora;
+        gameBoard.classList.add('pausado');
+    } else if (!document.hidden && pausado) {
+        // Acumula todas as pausas para descontá-las da pontuação.
+        tempoPausado += agora - inicioPausa;
+        pausado = false;
+        gameBoard.classList.remove('pausado');
+    }
+});
 
 const velocidadeCano = 1200; // pixels por segundo
 
@@ -119,6 +145,10 @@ ajustarVelocidadeCano();
 window.addEventListener('resize', ajustarVelocidadeCano);
 
 const controlarPorToque = () => {
+    if (pausado) {
+        return;
+    }
+
     if (!gameOver) {
         jump();
     } else if (restart) {

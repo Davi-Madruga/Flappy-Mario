@@ -44,6 +44,13 @@ body {
     pointer-events: none;
 }
 
+.game-board.pausado .mario,
+.game-board.pausado .pipe,
+.game-board.pausado .clouds {
+    /* Prevalece também sobre a animação de morte definida pelo JavaScript. */
+    animation-play-state: paused !important;
+}
+
 .pipe{
     position: absolute;
     bottom: 50px;
