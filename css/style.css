@@ -1,3 +1,4 @@
+/* Base e layout da página */
 * {
     margin: 0;
     padding: 0;
@@ -12,6 +13,7 @@ body {
     align-items: center;
 }
 
+/* Cenário e chão */
 .game-board {
     width: 100%;
     max-width: 1200px;
@@ -19,7 +21,7 @@ body {
 
     border: 8px solid black;
     border-radius: 12px;
-    
+
     margin: 0 auto;
     position: relative;
     overflow: hidden;
@@ -44,14 +46,8 @@ body {
     pointer-events: none;
 }
 
-.game-board.pausado .mario,
-.game-board.pausado .pipe,
-.game-board.pausado .clouds {
-    /* Prevalece também sobre a animação de morte definida pelo JavaScript. */
-    animation-play-state: paused !important;
-}
-
-.pipe{
+/* Elementos do jogo */
+.pipe {
     position: absolute;
     bottom: 50px;
     width: 80px;
@@ -65,18 +61,15 @@ body {
     left: 50px;
 }
 
-.jump{
-    animation: jump 500ms ease-out;
-}
- 
-.clouds{
+.clouds {
     position: absolute;
     width: 500px;
     height: 200px;
 
-    animation: clouds-animation 30s infinite linear ;
+    animation: clouds-animation 30s infinite linear;
 }
 
+/* Placar, mensagem e instruções */
 .pontuacao {
     position: absolute;
     top: 16px;
@@ -98,9 +91,6 @@ body {
 
     pointer-events: none;
 }
-
-
-
 .play-again {
     position: absolute;
     top: 50%;
@@ -117,10 +107,6 @@ body {
     z-index: 10;
 }
 
-.hidden {
-    display: none;
-}
-
 .instrucoes {
     padding: 16px;
     margin: 32px;
@@ -132,18 +118,35 @@ body {
     background-color: rgb(230, 230, 230);
 }
 
+/* Interação e estados */
+.hidden {
+    display: none;
+}
+
+.jump {
+    animation: jump 500ms ease-out;
+}
+
+.game-board.pausado .mario,
+.game-board.pausado .pipe,
+.game-board.pausado .clouds {
+    /* Prevalece também sobre a animação de morte definida pelo JavaScript. */
+    animation-play-state: paused !important;
+}
+
 .game-board,
 .play-again {
     touch-action: manipulation;
     user-select: none;
 }
 
-@keyframes pipe-animation{
+/* Animações */
+@keyframes pipe-animation {
     from {
         right: -80px;
     }
 
-    to{
+    to {
         right: 100%;
     }
 }
@@ -167,7 +170,7 @@ body {
     from {
         right: -500px;
     }
-    to{
+    to {
         right: 100%;
     }
 }

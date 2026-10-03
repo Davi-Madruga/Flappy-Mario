@@ -1,27 +1,114 @@
+// Elementos da página
+const gameBoard = document.querySelector('.game-board');
+const playAgain = document.querySelector('.play-again');
+const pontuacao = document.getElementById('pontuacao');
 const mario = document.querySelector('.mario');
 const pipe = document.querySelector('.pipe');
 const clouds = document.querySelector('.clouds');
 
+// Configurações
+const opcoes = ['KeyW', 'Space', 'ArrowUp'];
+const pontosPorSegundo = 10;
+const velocidadeCano = 1200; // pixels por segundo
+
+// Estado da partida
+const inicioPartida = performance.now();
 let gameOver = false;
 let pontos = 0;
 let restart = false;
 
-const pontuacao = document.getElementById('pontuacao');
-const inicioPartida = performance.now();
-const pontosPorSegundo = 10;
 let pausado = document.hidden;
 let inicioPausa = pausado ? inicioPartida : 0;
 let tempoPausado = 0;
 
+// Ações do jogo
 const jump = () => {
     if (pausado || gameOver || mario.classList.contains('jump')) {
-        return
+        return;
     }
 
     new Audio('audio/jump-sound-effect.mp3').play();
-    mario.classList.add("jump");
-}
+    mario.classList.add('jump');
+};
 
+const atualizarPontuacao = () => {
+    const segundos = (performance.now() - inicioPartida - tempoPausado) / 1000;
+    const novosPontos = Math.floor(segundos * pontosPorSegundo);
+
+    if (novosPontos !== pontos) {
+        pontos = novosPontos;
+        pontuacao.textContent = pontos;
+    }
+};
+
+const ajustarVelocidadeCano = () => {
+    const distancia = gameBoard.clientWidth + pipe.offsetWidth;
+    const duracao = distancia / velocidadeCano;
+
+    pipe.style.animationDuration = `${duracao}s`;
+};
+
+const controlarPorToque = () => {
+    if (pausado) {
+        return;
+    }
+
+    if (!gameOver) {
+        jump();
+    } else if (restart) {
+        window.location.reload();
+    }
+};
+
+// Atualização da partida: posições, colisão e fim de jogo
+const loop = setInterval(() => {
+    if (pausado) {
+        return;
+    }
+
+    const pipePosition = pipe.offsetLeft;
+    const marioPosition = +window.getComputedStyle(mario).bottom.replace('px', '');
+    const cloudsPosition = clouds.offsetLeft;
+
+    const marioRect = mario.getBoundingClientRect();
+    const pipeRect = pipe.getBoundingClientRect();
+
+    const marioHitbox = {
+        left: marioRect.left + 70,
+        right: marioRect.right - 35,
+        bottom: marioRect.bottom + 5
+    };
+
+    const pipeHitbox = pipeRect;
+
+    const colidiu =
+        marioHitbox.left < pipeHitbox.right &&
+        marioHitbox.right > pipeHitbox.left &&
+        marioHitbox.bottom > pipeHitbox.top;
+
+    atualizarPontuacao();
+
+    if (colidiu) {
+        pipe.style.animation = 'none';
+        pipe.style.left = `${pipePosition}px`;
+
+        mario.style.animation = 'game-over 2s ease-in forwards';
+        mario.style.bottom = `${marioPosition}px`;
+
+        clouds.style.animation = 'none';
+        clouds.style.left = `${cloudsPosition}px`;
+
+        mario.src = 'images/game-over.png';
+        mario.style.width = '80px';
+        mario.style.marginLeft = '70px';
+
+        new Audio('audio/death-sound-effect.mp3').play();
+        clearInterval(loop);
+        gameOver = true;
+    }
+}, 10);
+
+// Eventos: animações, teclado, visibilidade e toque
 // A animação só termina depois de consumir seu tempo ativo, sem a pausa.
 mario.addEventListener('animationend', (event) => {
     if (event.animationName === 'jump') {
@@ -34,87 +121,21 @@ mario.addEventListener('animationend', (event) => {
     }
 });
 
-const atualizarPontuacao = () => {
-    const segundos = (performance.now() - inicioPartida - tempoPausado) / 1000;
-    const novosPontos = Math.floor(segundos * pontosPorSegundo);
-
-    if (novosPontos !== pontos) {
-        pontos = novosPontos;
-        pontuacao.textContent = pontos;
-    }
-};
-
-const loop = setInterval(()=>{
-    if (pausado) {
-        return;
-    }
-
-    const pipePosition = pipe.offsetLeft;
-    const marioPosition = +window.getComputedStyle(mario).bottom.replace('px','');
-    const cloudsPosition = clouds.offsetLeft;
-
-    const marioRect = mario.getBoundingClientRect();
-    const pipeRect = pipe.getBoundingClientRect();      
-
-    const marioHitbox = {
-    left: marioRect.left + 70,
-    right: marioRect.right - 35,
-    top: marioRect.top + 20,
-    bottom: marioRect.bottom + 5};
-    
-    const pipeHitbox = pipeRect;
-
-    const colidiu =
-        marioHitbox.left < pipeHitbox.right &&
-        marioHitbox.right > pipeHitbox.left &&
-        marioHitbox.bottom > pipeHitbox.top;
-    
-    atualizarPontuacao();
-    if (colidiu){
-        pipe.style.animation = 'none';
-        pipe.style.left = `${pipePosition}px`;
-
-        mario.style.animation = 'game-over 2s ease-in forwards';
-        mario.style.bottom = `${marioPosition}px`;
-
-        clouds.style.animation = 'none';
-        console.log(cloudsPosition,marioPosition,pipePosition);
-        clouds.style.left = `${cloudsPosition}px`;
-
-        mario.src = 'images/game-over.png';
-        mario.style.width = '80px';
-        mario.style.marginLeft = '70px';
-
-        new Audio('audio/death-sound-effect.mp3').play();
-        clearInterval(loop)
-        gameOver = true
-
-    }
-
-}, 10)
-
-const opcoes = ['KeyW', 'Space', 'ArrowUp'];
-
-document.addEventListener("keydown", (event) => {
+document.addEventListener('keydown', (event) => {
     if (opcoes.includes(event.code)) {
         event.preventDefault();
     }
-    
+
     if (event.repeat || pausado) {
         return;
     }
 
     if (!gameOver && opcoes.includes(event.code)) {
         jump();
-    } else if (gameOver && restart){
+    } else if (gameOver && restart) {
         window.location.reload();
     }
 });
-
-const gameBoard = document.querySelector('.game-board');
-const playAgain = document.querySelector('.play-again');
-
-gameBoard.classList.toggle('pausado', pausado);
 
 document.addEventListener('visibilitychange', () => {
     const agora = performance.now();
@@ -131,39 +152,15 @@ document.addEventListener('visibilitychange', () => {
     }
 });
 
-const velocidadeCano = 1200; // pixels por segundo
-
-const ajustarVelocidadeCano = () => {
-    const distancia = gameBoard.clientWidth + pipe.offsetWidth;
-    const duracao = distancia / velocidadeCano;
-
-    pipe.style.animationDuration = `${duracao}s`;
-};
-
-ajustarVelocidadeCano();
-
 window.addEventListener('resize', ajustarVelocidadeCano);
 
-const controlarPorToque = () => {
-    if (pausado) {
-        return;
-    }
-
-    if (!gameOver) {
-        jump();
-    } else if (restart) {
-        window.location.reload();
-    }
-};
-
+// O toque na mensagem também chega ao cenário por propagação.
 gameBoard.addEventListener('pointerdown', (event) => {
     if (event.isPrimary && event.button === 0) {
         controlarPorToque();
     }
 });
 
-playAgain.addEventListener('pointerdown', (event) => {
-    if (event.isPrimary && event.button === 0) {
-        controlarPorToque();
-    }
-});
+// Inicialização
+gameBoard.classList.toggle('pausado', pausado);
+ajustarVelocidadeCano();
